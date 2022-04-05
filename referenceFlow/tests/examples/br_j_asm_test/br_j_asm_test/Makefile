@@ -25,7 +25,7 @@
 #
 #				History:  See git log
 #
-# @author		Bill McSpadden (bill.mcspadden@seagate.com
+# @author		Bill McSpadden (bill.mcspadden@seagate.com)
 # --------------------------------------------------------------------------------------------
 
 
@@ -36,6 +36,7 @@
 #CONFIG_BASE		:= 0x70080
 #MARCH          	:= -march=rv32imc -mabi=ilp32
 LD_FILE			:= ./riscv_test.ld
+RUN_TOOL		:= /home/billmc/riscv/sail-riscv.git/c_emulator/riscv_sim_RV32
 
 # USER MUST SET THESE TO A PROPER SETTING
 # --------------------------------------------------------------------------------------------
@@ -52,6 +53,10 @@ endif
 
 ifndef MARCH
 $(error The make variable, MARCH, must be set.)
+endif
+
+ifndef RUN_TOOL
+$(error The make variable, RUN_TOOL, must be set.)
 endif
 
 
@@ -78,6 +83,7 @@ LD_FLAGS	:= -T ${LD_FILE}
 
 OBJS		:= ${ASM_OBJS} ${C_OBJS}
 
+OUT_FILE		:= ./sim.out
 
 $(info =================================================================)
 $(info Make variable settings....)
@@ -99,7 +105,7 @@ $(info =================================================================)
 
 
 
-${TARGET}	: ${OBJS}
+${TARGET}	: ${OBJS} ${LD_FILE}
 	${LD} ${LD_FLAGS} -o $@ ${OBJS}
 
 ${DUMP} : ${TARGET}
@@ -116,14 +122,16 @@ ${DUMP} : ${TARGET}
 
 build: ${TARGET} ${DUMP}
 
+dump: ${DUMP}
+
 install:
 
 clean:
-	rm -f ${OBJS} ${TARGET} ${DUMP}
+	rm -f ${OBJS} ${TARGET} ${DUMP} ${OUT_FILE}
 
 
-run:
-
+run: ${TARGET}
+	${RUN_TOOL} ${TARGET} 2>&1 | tee ${OUT_FILE}
 
 clean_all: clean
 

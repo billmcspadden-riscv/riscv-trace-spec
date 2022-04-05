@@ -27,13 +27,15 @@ SECTIONS
 {
 
   /* text: test code section */
-  . = 0x00000040;
+/*   . = 0x00000040; */
+  . = 0x80000000;
   .text.init : { *(.text.init) }
 
   .text : { *(.text) }
 
   /* data segment */
-  . = 0x00080000;
+  /* . = 0x00080000; */
+  . = 0x80080000;
   .tohost ALIGN(0x1000) : { *(.tohost) }
   .data : { *(.data) }
   .rodata : { *(.rodata) *(.rodata.*) *(.gnu.linkonce.r.*) }
